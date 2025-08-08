@@ -1,0 +1,1 @@
+export const StyleInputs = 'w-full px-3 py-2.5 bg-[var(--bg-100)] text-[var(--text-100)] border border-[var(--bg-300)] rounded-md  focus:ring-[var(--primary-200)] hover:border-[var(--primary-200)] outline-none transition-all duration-200'

@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@font-face {
+  font-family: 'Gotham-Black';
+  src: url('/fonts/Gotham-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham-Book';
+  src: url('/fonts/Gotham-Book.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham-Medium';
+  src: url('/fonts/Gotham-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* fuente itallic */
+@font-face {
+  font-family: 'Gotham-Italic';
+  src: url('/fonts/Gotham-Italic.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* FUENTE APUNTADA PARA EL FOOTER */
+@font-face {
+  font-family: 'BebasNeue-Regular';
+  src: url('/fonts/BebasNeue-Regular.ttf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Bison-BoldItallic';
+  src: url('/fonts/Bison-BoldItallic.ttf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* FUENTE PARA SALTA */
+@font-face {
+  font-family: 'OpenSans-BoldItalic';
+  src: url('/fonts/OpenSans-BoldItalic.ttf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* Define utility classes */
+.gothamBlack {
+  font-family: 'Gotham-Black', sans-serif;
+}
+
+.gothamBook {
+  font-family: 'Gotham-Book', sans-serif;
+}
+
+.gothamMedium {
+  font-family: 'Gotham-Medium', sans-serif;
+}
+
+.gothamItalic {
+  font-family: 'Gotham-Italic', sans-serif;
+}
+
+.bisonBoldItallic {
+  font-family: 'Bison-BoldItallic', sans-serif;
+}
+
+/* fuente de footer  */
+.bebasNeueRegular {
+  font-family: 'BebasNeue-Regular', sans-serif;
+}
+
+/* FUENTE PARA SALTA */
+.OpenSansBoldItalic {
+  font-family: 'OpenSans-BoldItalic', sans-serif;
+}
+
+/* ESTILOS PARA LOS TEXTOS */
+.texto-inclinado {
+  display: inline-block;
+  transform: skewX(-8deg);
+  /* Inclina el texto en el eje X */
+}
+
+
+/* TRANSICIONES  */
+html {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+/* En App.css o global.css */
+.hide-scrollbar {
+  scrollbar-width: none;
+  /* Firefox: oculta visualmente */
+  -ms-overflow-style: none;
+  /* IE */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  opacity: 0;
+  /* No tiene efecto directo */
+}
+
+.hide-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  opacity: 0;
+}
+
+.hide-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  /* opcional para hover */
+}
+
+
+/* SCROLL */
+/* Global scrollbar styling */
+* {
+  scrollbar-width: thin;
+  /* Firefox */
+  scrollbar-color: var(--accent-100) var(--bg-300);
+  /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  /* ← más fino */
+  height: 4px;
+  /* ← scroll horizontal fino */
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--bg-300);
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--accent-100);
+  border-radius: 10px;
+  border: 1px solid var(--bg-300);
+  /* espacio alrededor del "thumb" */
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent-300);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: brightness(0) invert(1);
+  /* vuelve el ícono blanco */
+}

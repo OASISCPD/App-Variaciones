@@ -1,0 +1,65 @@
+// type reutilizable para los props que manejan ordenamiento
+export type SortState<T> = {
+    sortField: keyof T;
+    sortOrder: 'asc' | 'desc';
+};
+
+export type CajaDTO = {
+    id: number;
+    fecha: string;
+    empleado: string;
+    detalle: string;
+    num_variacion: number;
+    tipo_variacion: string;
+    sobrante: number;
+    faltante: number;
+    created_at: string;
+    update_at: string;
+    estado: string;
+    usuario: string; // o `usuario_id: number` si lo cambias
+}
+
+export interface Variacion {
+    id: number
+    usuario: string
+    fecha: string
+    empleado: string
+    legajo: string
+    detalle: string
+    numeroVariacion: string
+    tipoVariacion: string
+    faltante: number | null
+    sobrante: number | null
+}
+export type UserDTO = {
+    id: number;
+    nombre: string;
+    apellido: string;
+    usr: string;
+    email: string;
+    password?: string;
+    estado: number;
+    celular: string;
+    fecha_registro: string;
+    legajo: number
+    permisos_id: number | string;
+}
+
+export type PermisoDTO = {
+    id: number;
+    nombre: string;
+    descripcion: string;
+}
+
+export interface ModalData {
+    type: ModalType | null
+    data: Variacion | null
+}
+export type ModalType = "variacion" | "vale" | "editar" | "eliminar" | "agregar" | "agregar_usuario" | null
+
+export interface ModalDataUsers {
+    type: ModalUsersType | null;
+    data: UserDTO | null
+}
+
+export type ModalUsersType = "agregar" | "eliminar" | "editar"
