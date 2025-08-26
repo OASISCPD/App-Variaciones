@@ -1,6 +1,7 @@
 import { RiArrowUpDownLine, RiArrowUpFill, RiArrowDownFill } from "react-icons/ri";
 import type { SortState } from "../types";
 import type { JSX } from "react";
+import { format } from "date-fns";
 
 
 export const parseAmount = (amount: number | string): string => {
@@ -23,6 +24,19 @@ export const formatCurrency = (value: number): string => {
 
     return value < 0 ? `-$${formatted}` : `$${formatted}`;
 };
+
+
+// Función para obtener fecha y hora actual en formato requerido
+export const getCurrentDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
 
 // Función para determinar el color del monto
 export const getAmountColor = (value: number): string => {
@@ -49,7 +63,12 @@ export const formatCurrencyHome = (value: any) =>
         minimumFractionDigits: 2,
     });
 
-
+export type GetFilters = {
+    fechaDesde?: string;   // "YYYY-MM-DD"
+    fechaHasta?: string;   // "YYYY-MM-DD"
+    legajo?: string | number;
+    tipo?: "sobrante" | "faltante" | ""; // del select
+}
 
 
 export const getStatusBadge = (detalle: string) => {
@@ -57,20 +76,20 @@ export const getStatusBadge = (detalle: string) => {
 
     if (lower.includes("faltante")) {
         return (
-            <span className="px-2 py-1 text-xs text-white bg-[var(--accent-100)] border border-[var(--primary-200)] rounded">
+            <span className="px-2 py-1 text-xs text-white bg-[var(--accent-100)] border border-[var(--primary-200)] rounded-full">
                 Faltante
             </span>
         );
     } else if (lower.includes("sobrante")) {
         return (
-            <span className="px-2 py-1 text-xs text-[var(--primary-200)] border border-[var(--primary-200)] bg-[var(--bg-200)] rounded">
+            <span className="px-2 py-1 text-xs text-[var(--primary-200)] border border-[var(--primary-200)] bg-[var(--bg-200)] rounded-full">
                 Sobrante
             </span>
         );
     }
 
     return (
-        <span className="px-2 py-1 text-xs text-gray-700 bg-gray-200 border border-[var(--primary-200)] rounded">
+        <span className="px-2 py-1 text-xs text-gray-700 bg-gray-200 border border-[var(--primary-200)] rounded-full">
             {detalle}
         </span>
     );
@@ -115,4 +134,23 @@ export const getTipoVariacionBadge = (tipo: string) => {
     return <span className="border rounded-full uppercase py-1 px-2 border-gray-300 text-gray-600 bg-gray-50">{tipo.toUpperCase()}</span>;
 };
 
+
+export const formateDateTime = (dateString: string) => {
+    return format(new Date(dateString), "dd/MM/yyyy HH:mm:ss")
+}
+
+export function getActionColor(accion: string): string {
+    const lower = accion.toLowerCase();
+
+    if (lower.includes("agrega") || lower.includes("agregar")) {
+        return "text-green-500";
+    }
+    if (lower.includes("edita") || lower.includes("editar") || lower.includes("actualiza")) {
+        return "text-yellow-500";
+    }
+    if (lower.includes("elimina") || lower.includes("elimino") || lower.includes("eliminar")) {
+        return "text-[--accent-100]";
+    }
+    return "text-[--text-200]";
+}
 

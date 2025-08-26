@@ -32,7 +32,7 @@ export const ModalVale: React.FC<props> = ({ modalData }) => {
                     <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">SECTOR</label>
                         <div className="border-b border-gray-400 pb-1">
-                            <span className="text-sm">{data.tipoVariacion}</span>
+                            <span className="text-sm">{data.tipo_variacion}</span>
                         </div>
                     </div>
                 </div>

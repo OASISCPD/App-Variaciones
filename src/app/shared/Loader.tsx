@@ -36,7 +36,7 @@ export default LoaderPage
 export const LoaderHover: React.FC = () => {
     return (
         <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center text-[var(--accent-300)]">
+            <div className="flex flex-col items-center justify-center text-[var(--accent-200)]">
                 <TbLoader3 className="animate-spin text-4xl sm:text-5xl mb-2" />
                 <span className="text-sm sm:text-base font-medium">Cargando...</span>
             </div>

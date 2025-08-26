@@ -1,19 +1,29 @@
 import { useForm } from "react-hook-form";
-import type { Variacion } from "../../../types"
-import { inputStyle } from "../../../utils/const";
+import type { CajaDTO, Variacion } from "../../../types"
+import { inputStyle, inputStyleDisabled } from "../../../utils/const";
+import { AiFillLock } from "react-icons/ai";
+import { useEffect } from "react";
 
 interface ModalEditProps {
-    data: Variacion | null;
+    data: CajaDTO | null;
     cancel: () => void;
-    confirm: (update: Variacion) => void;
+    confirm: (update: CajaDTO) => void;
 }
 export const ModalEdit: React.FC<ModalEditProps> = ({ cancel, confirm, data }) => {
     if (!data) return null
 
-    const { register, handleSubmit, formState: { errors } } = useForm<Variacion>({ defaultValues: data })
-    const onSubmit = (formData: Variacion) => {
+    const { register, setValue, handleSubmit, formState: { errors } } = useForm<CajaDTO>({ defaultValues: data })
+    const onSubmit = (formData: CajaDTO) => {
         confirm(formData)
     }
+
+    useEffect(() => {
+        if (data?.fecha) {
+            const fechaFormateada = new Date(data.fecha).toISOString().split("T")[0];
+            setValue("fecha", fechaFormateada);
+        }
+    }, [data, setValue]);
+
     return (
         <div className="space-y-6">
             <form
@@ -26,33 +36,40 @@ export const ModalEdit: React.FC<ModalEditProps> = ({ cancel, confirm, data }) =
                         <input
                             type="date"
                             {...register("fecha", { required: "La fecha es obligatoria" })}
-                            className={`${inputStyle}`}
+                            className={inputStyle}
                         />
                         {errors.fecha && <p className="text-red-500 text-sm">{errors.fecha.message}</p>}
                     </div>
 
                     <div>
-                        <label className="text-sm font-medium text-[var(--text-200)]">Legajo</label>
-                        <input
+                        <label className="flex items-center gap-1 text-sm font-medium text-[var(--text-200)]">Legajo
+                            <AiFillLock size={16} className="text-gray-400" title="Campo bloqueado" />
+                        </label>
+                        {/*  <input
                             type="number"
                             min={0}
-                            {...register("legajo", {
+                            {...register("empleado", {
                                 required: "El legajo es obligatorio",
                                 min: { value: 0, message: "No puede ser negativo" },
                             })}
                             className={`${inputStyle}`}
-                        />
-                        {errors.legajo && <p className="text-red-500 text-sm">{errors.legajo.message}</p>}
+                        /> */}
+                        <div className={`${inputStyleDisabled} text-[var(--accent-200)]`}>{data.empleado}</div>
+                        {errors.empleado && <p className="text-red-500 text-sm">{errors.empleado.message}</p>}
                     </div>
 
                     <div>
-                        <label className="text-sm font-medium text-[var(--text-200)]">Nombre y apellido</label>
-                        <input
+                        <label className="flex items-center gap-1 text-sm font-medium text-[var(--text-200)]">
+                            Nombre y apellido
+                            <AiFillLock size={16} className="text-gray-400" title="Campo bloqueado" />
+                        </label>
+                        {/*    <input
                             type="text"
-                            {...register("empleado", { required: "Este campo es obligatorio" })}
-                            className={`${inputStyle}`}
-                        />
-                        {errors.empleado && <p className="text-red-500 text-sm">{errors.empleado.message}</p>}
+                            {...register("nombre_empleado", { required: "Este campo es obligatorio" })}
+                            className={`${inputStyleDisabled}`}
+                        /> */}
+                        <div className={`${inputStyleDisabled} text-[var(--accent-200)]`}>{data.nombre_empleado}</div>
+                        {errors.nombre_empleado && <p className="text-red-500 text-sm">{errors.nombre_empleado.message}</p>}
                     </div>
 
                     <div>
@@ -69,14 +86,14 @@ export const ModalEdit: React.FC<ModalEditProps> = ({ cancel, confirm, data }) =
                         <input
                             type="number"
                             min={0}
-                            {...register("numeroVariacion", {
+                            {...register("num_variacion", {
                                 required: "Este campo es obligatorio",
                                 min: { value: 0, message: "Debe ser 0 o mayor" },
                             })}
                             className={`${inputStyle}`}
                         />
-                        {errors.numeroVariacion && (
-                            <p className="text-red-500 text-sm">{errors.numeroVariacion.message}</p>
+                        {errors.num_variacion && (
+                            <p className="text-red-500 text-sm">{errors.num_variacion.message}</p>
                         )}
                     </div>
 
@@ -84,11 +101,11 @@ export const ModalEdit: React.FC<ModalEditProps> = ({ cancel, confirm, data }) =
                         <label className="text-sm font-medium text-[var(--text-200)]">Tipo de variación</label>
                         <input
                             type="text"
-                            {...register("tipoVariacion", { required: "Campo requerido" })}
+                            {...register("tipo_variacion", { required: "Campo requerido" })}
                             className={`${inputStyle}`}
                         />
-                        {errors.tipoVariacion && (
-                            <p className="text-red-500 text-sm">{errors.tipoVariacion.message}</p>
+                        {errors.tipo_variacion && (
+                            <p className="text-red-500 text-sm">{errors.tipo_variacion.message}</p>
                         )}
                     </div>
 
@@ -99,6 +116,7 @@ export const ModalEdit: React.FC<ModalEditProps> = ({ cancel, confirm, data }) =
                             min={0}
                             {...register("sobrante", {
                                 valueAsNumber: true,
+                                required: "Este campo es obligatorio",
                                 min: { value: 0, message: "No puede ser negativo" },
                             })}
                             className={`${inputStyle}`}
@@ -113,6 +131,7 @@ export const ModalEdit: React.FC<ModalEditProps> = ({ cancel, confirm, data }) =
                             min={0}
                             {...register("faltante", {
                                 valueAsNumber: true,
+                                required: "Este campo es obligatorio",
                                 min: { value: 0, message: "No puede ser negativo" },
                             })}
                             className={`${inputStyle}`}
@@ -136,7 +155,7 @@ export const ModalEdit: React.FC<ModalEditProps> = ({ cancel, confirm, data }) =
                         Volver
                     </button>
                 </div>
-            </form>
-        </div>
+            </form >
+        </div >
     )
 }

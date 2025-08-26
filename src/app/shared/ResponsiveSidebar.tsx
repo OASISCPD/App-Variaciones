@@ -4,6 +4,9 @@ import { BiLogOut, BiMenu, BiX } from "react-icons/bi"
 import { Link, useNavigate } from "react-router-dom"
 import { API_URL } from "../service/connection";
 import { FaHome, FaUsers } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
+import { FiHome, FiUsers } from "react-icons/fi";
+import { api } from "../api/api";
 
 // Tipos para los elementos del menú
 interface MenuItem {
@@ -45,7 +48,7 @@ export function ResponsiveSidebar({
     defaultOpen = false
 }: ResponsiveSidebarProps) {
     const [isOpen, setIsOpen] = React.useState(defaultOpen)
-
+    const { user } = useAuth()
     // Detectar cambios en el tamaño de la pantalla
     React.useEffect(() => {
         const handleResize = () => {
@@ -79,15 +82,15 @@ export function ResponsiveSidebar({
         toggleSidebar,
         closeSidebar
     }), [isOpen, toggleSidebar, closeSidebar])
+    const navigate = useNavigate()
 
     const logout = async () => {
-        const navigate = useNavigate()
+        navigate("/")
 
         try {
-            await axios.get(`${API_URL}/logout`, {
+            await api.get('/logout', {
                 withCredentials: true // importante si la sesión se maneja con cookies
             })
-            navigate("/")
         } catch (err) {
             console.error("Error al cerrar sesión", err)
         }
@@ -106,7 +109,7 @@ export function ResponsiveSidebar({
                 )}
                 {/* Sidebar */}
                 <aside
-                    className={`fixed inset-y-0 left-0 z-30 lg:hidden w-64 transform shadow-lg transition-transform duration-300 ease-in-out 
+                    className={`fixed  inset-y-0 left-0 z-30 lg:hidden w-64 transform shadow-lg transition-transform duration-300 ease-in-out 
     bg-[var(--primary-100)] border-r border-[var(--bg-300)] 
     ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:relative lg:translate-x-0`}
                 >
@@ -161,7 +164,7 @@ export function ResponsiveSidebar({
                     </div>
                 </aside>
                 {/* Contenido principal */}
-                <main className="flex flex-1 tracking-wider bg-[var(--primary-100)] flex-col overflow-auto">
+                <main className="flex flex-1 tracking-wider bg-[var(--primary-100)]  flex-col overflow-auto">
                     {/* Header con botón para abrir el sidebar */}
                     <header className="flex h-16 items-center px-4 lg:hidden">
                         <button
@@ -172,9 +175,9 @@ export function ResponsiveSidebar({
                             <BiMenu className="h-5 w-5" />
                         </button>
                     </header>
-                    <header className=" hidden  lg:flex  lg:block items-center justify-between h-16 px-4 py-4 border-b border-[var(--bg-300)] bg-[var(--primary-100)]">
+                    <header className=" hidden  lg:flex  lg:block  items-center justify-between h-16 px-4 py-4 border-b border-[var(--primary-200)] bg-[var(--primary-100)]">
                         {/* Título */}
-                        <h1 className="text-[var(--text-100)] text-lg font-semibold tracking-wide">
+                        <h1 className="text-[var(--text-100)] text-xl pl-4 font-semibold tracking-wide">
                             Variaciones de cajas
                         </h1>
 
@@ -192,10 +195,9 @@ export function ResponsiveSidebar({
                             ))}
 
                             {/* Usuario */}
-                            <div className="px-3 py-1 rounded bg-[var(--primary-200)] text-[var(--text-200)] text-sm shadow-sm">
-                                <span className="font-medium">Usuario:</span> Alex Becci
+                            <div className="px-4 py-1.5 rounded-md bg-[var(--primary-200)] text-[var(--text-100)] text-sm shadow-sm">
+                                <span className="font-medium ">Usuario:</span> {user?.nombre.split(' ')[0]} {user?.apellido.split(' ')[0]} <span className="">{user?.usr}</span>
                             </div>
-
                             {/* Logout */}
                             <button
                                 onClick={logout}
@@ -223,8 +225,8 @@ export function SidebarPage({ children }: { children: React.ReactNode }) {
     // Ejemplo de elementos del menú
 
     const menuItems: MenuItem[] = [
-        { id: "inicio", label: "Inicio", href: "/home", icon: <FaHome /> },
-        { id: "usuarios", label: "Usuarios", href: "/users", icon: <FaUsers /> },
+        { id: "inicio", label: "Inicio", href: "/home", icon: <FiHome /> },
+        { id: "usuarios", label: "Usuarios", href: "/users", icon: <FiUsers /> },
     ];
 
     return (

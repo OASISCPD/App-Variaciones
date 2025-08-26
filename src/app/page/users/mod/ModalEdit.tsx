@@ -28,6 +28,7 @@ export const ModalEdit: React.FC<ModalEditProps> = ({ cancel, confirm, data }) =
     const onSubmit = (updateData: UserDTO) => {
         confirm(updateData)
     }
+
     return (
         <div className="space-y-6">
             <form

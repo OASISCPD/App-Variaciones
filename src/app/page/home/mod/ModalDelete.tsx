@@ -1,11 +1,11 @@
-import type { Variacion } from "../../../types";
+import type { CajaDTO } from "../../../types";
 
 interface ModalQuestionProps {
     text: string;
     subText: string;
-    confirm: (id: number | string) => void
+    confirm: (id: number | string, legajo: string | number) => void
     cancel: () => void
-    item: Variacion | null
+    item: CajaDTO | null
 }
 export const ModalQuestion: React.FC<ModalQuestionProps> = ({ cancel, confirm, text, subText, item }) => {
     if (!item) return null
@@ -16,7 +16,7 @@ export const ModalQuestion: React.FC<ModalQuestionProps> = ({ cancel, confirm, t
 
             <div className="flex justify-center gap-4 pt-4">
                 <button
-                    onClick={() => confirm(item.id)}
+                    onClick={() => confirm(item.id, item.empleado)}
                     className="px-4 py-2 rounded  text-[var(--text-200)] font-semibold  bg-[var(--primary-100)] hover:bg-[var(--primary-200)] transition-all"
                 >
                     Confirmar

@@ -1,6 +1,8 @@
+import type { ActiveTabDTO } from "../../../types"
+
 // components/NavigationTabs.tsx
 interface Props {
-  setActiveTab: React.Dispatch<React.SetStateAction<"listado" | "historial">>
+  setActiveTab: (string: ActiveTabDTO) => void
   activeTab: string
 }
 
@@ -13,7 +15,7 @@ export const NavigationTabs: React.FC<Props> = ({ setActiveTab, activeTab }) => 
             onClick={() => setActiveTab("listado")}
             className={`py-4 px-2 border-b-2 font-medium text-sm ${activeTab === "listado"
               ? "border-[--primary-300] text-[--text-100]"
-              : "border-transparent text-gray-100 hover:text-gray-300"
+              : "border-transparent hover:border-[--primary-200] text-gray-100 hover:text-gray-300"
               }`}
           >
             Listado Cajas
@@ -22,10 +24,19 @@ export const NavigationTabs: React.FC<Props> = ({ setActiveTab, activeTab }) => 
             onClick={() => setActiveTab("historial")}
             className={`py-4 px-2 border-b-2 font-medium text-sm ${activeTab === "historial"
               ? "border-[--primary-300] text-[--text-100]"
-              : "border-transparent text-gray-100 hover:text-gray-300"
+              : "border-transparent hover:border-[--primary-200] text-gray-100 hover:text-gray-300"
               }`}
           >
             Historial Cajas
+          </button>
+          <button
+            onClick={() => setActiveTab("vales")}
+            className={`py-4 px-2 border-b-2 font-medium text-sm ${activeTab === "vales"
+              ? "border-[--primary-300] text-[--text-100]"
+              : "border-transparent hover:border-[--primary-200] text-gray-100 hover:text-gray-300"
+              }`}
+          >
+            Vales
           </button>
         </div>
       </div>

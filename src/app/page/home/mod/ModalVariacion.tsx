@@ -1,5 +1,5 @@
 import type { ModalData } from "../../../types"
-
+import format from "date-fns/format"
 interface props {
     modalData: ModalData | null
 }
@@ -11,45 +11,49 @@ export const ModalVariacion: React.FC<props> = ({ modalData }) => {
         <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Usuario</label>
-                    <p className="mt-1 text-sm text-gray-900">{data.usuario}</p>
+                    <label className="block text-sm font-medium text-[--text-200]">Usuario</label>
+                    <p className="mt-1 text-sm text-[--text-100]">{data.usuario}</p>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Fecha</label>
-                    <p className="mt-1 text-sm text-gray-900">{data.fecha}</p>
+                    <label className="block text-sm font-medium text-[--text-200]">Fecha</label>
+                    <p className="mt-1 text-sm text-[--text-100]">{data.fecha ? format(new Date(data.fecha), 'dd/MM/yyyy HH:mm:ss') : 'Sin fecha'}</p>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Empleado</label>
-                    <p className="mt-1 text-sm text-gray-900">{data.empleado}</p>
+                    <label className="block text-sm font-medium text-[--text-200]">Empleado</label>
+                    <p className="mt-1 text-sm text-[--text-100]">{data.nombre_empleado}</p>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Legajo</label>
-                    <p className="mt-1 text-sm text-gray-900">{data.legajo}</p>
+                    <label className="block text-sm font-medium text-[--text-200]">Legajo</label>
+                    <p className="mt-1 text-sm text-[--accent-200]">{data.empleado}</p>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">N° Variación</label>
-                    <p className="mt-1 text-sm text-gray-900">{data.numeroVariacion}</p>
+                    <label className="block text-sm font-medium text-[--text-200]">N° Variación</label>
+                    <p className="mt-1 text-sm text-[--text-100]">{data.num_variacion}</p>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Tipo Variación</label>
-                    <p className="mt-1 text-sm text-gray-900">{data.tipoVariacion}</p>
+                    <label className="block text-sm font-medium text-[--text-200]">Tipo Variación</label>
+                    <p className="mt-1 text-sm text-[--text-100]">{data.tipo_variacion}</p>
                 </div>
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Detalle</label>
-                <p className="mt-1 text-sm text-gray-900">{data.detalle}</p>
+                <label className="block text-sm font-medium text-[--text-200]">Detalle</label>
+                <p className="mt-1 text-sm text-[--text-100]">{data.detalle}</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Faltante</label>
-                    <p className="mt-1 text-sm text-red-600">
-                        {data.faltante ? `$${data.faltante.toLocaleString()}` : "-"}
+                    <label className="block text-sm font-medium text-[--text-200]">Faltante</label>
+                    <p className="mt-1 text-sm text-[--accent-100]">
+                        {data.faltante !== null && data.faltante !== undefined
+                            ? `$${data.faltante.toLocaleString()}`
+                            : "0"}
                     </p>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Sobrante</label>
+                    <label className="block text-sm font-medium text-[--text-200]">Sobrante</label>
                     <p className="mt-1 text-sm text-green-600">
-                        {data.sobrante ? `$${data.sobrante.toLocaleString()}` : "-"}
+                        {data.sobrante
+                            ? `$${data.sobrante.toLocaleString()}`
+                            : "0"}
                     </p>
                 </div>
             </div>
