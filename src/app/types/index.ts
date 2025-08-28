@@ -14,6 +14,9 @@ export type CajaDTO = {
     tipo_variacion: string;
     sobrante: number;
     faltante: number;
+    variacion_firma_empleado: string;
+    variacion_id: number;
+    variacion_created_at: string;
     created_at: string;
     update_at: string;
     legajo_usuario: number;
@@ -30,6 +33,9 @@ export type ValeDTO = {
     firma_empleado: string;
     created_at: string;
     usuario_nombre: string;
+    legajo_usuario: number;
+    nombre_empleado: string;
+    estado_id: number;
 }
 
 export interface Variacion {
@@ -65,6 +71,7 @@ export type UserDTO = {
     fecha_registro: string;
     legajo: number
     permisos_id: number | string;
+    nombre_empleado: string;
 }
 
 export type PermisoDTO = {
@@ -82,7 +89,7 @@ export interface ModalDataVale {
     data: ValeDTO | null
 
 }
-export type ModalType = "variacion" | "vale" | "editar" | "eliminar" | "agregar" | "agregar_usuario" | "ticket_variacion" | 'agregar_vale' | 'editar_vale' | 'eliminar_vale' | "firma" | null
+export type ModalType = "variacion" | "vale" | "editar" | "eliminar" | "agregar" | "agregar_usuario" | "ticket_variacion" | 'agregar_vale' | 'editar_vale' | 'eliminar_vale' | "firma" | "subir_firma" | null
 
 export interface ModalDataUsers {
     type: ModalUsersType | null;

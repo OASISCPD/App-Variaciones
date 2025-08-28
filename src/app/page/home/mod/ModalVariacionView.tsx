@@ -1,6 +1,5 @@
 // src/components/variaciones/ModalVariacionView.tsx
 import axios from "axios";
-import { format } from "date-fns";
 import { useEffect, useState, type FC } from "react";
 import { API_URL } from "../../../service/connection";
 import type { ModalData } from "../../../types";
@@ -29,28 +28,6 @@ interface Props {
     modalData: ModalData
 }
 
-const fmtDate = (d?: string | null) =>
-    d ? format(new Date(d), "dd/MM/yyyy") : "-";
-
-const fmtDateTime = (d?: string | null) =>
-    d ? format(new Date(d), "dd/MM/yyyy HH:mm:ss") : "-";
-
-const fmtMoney = (n?: number | null) =>
-    typeof n === "number" ? n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "-";
-
-const TipoBadge: FC<{ tipo: TipoVariacion }> = ({ tipo }) => {
-    const isSobrante = tipo === "SOBRANTE";
-    return (
-        <span
-            className={`px-2 py-0.5 rounded-full text-xs font-semibold ${isSobrante
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
-                }`}
-        >
-            {tipo}
-        </span>
-    );
-};
 
 export const ModalVariacionView: FC<Props> = ({ modalData }) => {
     if (!modalData.data?.id) {
@@ -113,7 +90,7 @@ export const ModalVariacionView: FC<Props> = ({ modalData }) => {
 
                 <div className="text-center">
                     <div className="font-semibold mb-2 text-[--text-100]">TURNO</div>
-                    <div className="border-b border-dotted border-[--primary-200] pb-1 min-h-[24px]">
+                    <div className="border-b uppercase border-dotted border-[--primary-200] pb-1 min-h-[24px]">
                         {variacion?.turno || '........................'}
                     </div>
                 </div>
@@ -238,10 +215,3 @@ export const ModalVariacionView: FC<Props> = ({ modalData }) => {
     );
 };
 
-// pequeño subcomponente para etiqueta + valor
-const Field: FC<{ label: string; children: React.ReactNode; full?: boolean }> = ({ label, children, full }) => (
-    <div className={`${full ? "sm:col-span-2" : ""}`}>
-        <div className="text-xs uppercase tracking-wide opacity-80 mb-1">{label}</div>
-        <div className="text-sm">{children}</div>
-    </div>
-);

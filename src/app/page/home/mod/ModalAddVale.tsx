@@ -2,14 +2,12 @@ import { useState, type FC } from "react"
 import { useAuth } from "../../../context/AuthContext"
 import { LoaderHover } from "../../../shared/Loader"
 import { useForm } from "react-hook-form"
-import { number } from "framer-motion"
 import { inputStyle } from "../../../utils/const"
 import { SelectTurnos } from "../components/vales/SelectTurnos"
-import { SignatureComponent } from "../components/vales/SignatureComponent"
-import axios from "axios"
-import { API_URL } from "../../../service/connection"
 import { createVale } from "../../../service/vales.service"
 import { toast } from "react-toastify"
+import { InputEmpleado } from "../../../shared/UI/InputEmpleado"
+import { getCurrentDateTime } from "../../../utils"
 
 type ValeFormData = {
     empleado: string,
@@ -27,10 +25,19 @@ interface ModalAddValeProps {
 export const ModalAddVale: FC<ModalAddValeProps> = ({ openModal }) => {
     const { user } = useAuth()
     const [loading, setLoading] = useState<boolean>(false);
-    const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<ValeFormData>();
+    const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm<ValeFormData>({
+        defaultValues: {
+            fecha: getCurrentDateTime(),
+            firma_empleado: ""
+        }
+    });
 
     const onSubmit = async (data: ValeFormData) => {
         console.log('Formulario enviando...', data);
+        if (!data.turno) {
+            toast.warning("El turno es obligatorio")
+            return
+        }
         try {
             setLoading(true);
             if (!user?.id) {
@@ -38,6 +45,7 @@ export const ModalAddVale: FC<ModalAddValeProps> = ({ openModal }) => {
                 alert("No hay usuario logueado");
                 return;
             }
+            
             //creamos body a enviar 
             const payload = {
                 empleado: String(data.empleado).trim(),
@@ -72,28 +80,19 @@ export const ModalAddVale: FC<ModalAddValeProps> = ({ openModal }) => {
                     <div>
                         <label className="block text-sm font-medium mb-1">Fecha</label>
                         <input
-                            type="date"
+                            type="datetime-local"
                             {...register("fecha", { required: "La fecha es obligatoria" })}
                             className={inputStyle}
                         />
                         {errors.fecha && <p className="text-sm text-[var(--accent-100)]">{errors.fecha.message}</p>}
                     </div>
-                    {/* Legajo */}
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Legajo</label>
-                        <input
-                            type="number"
-                            {...register("empleado", {
-                                required: "El legajo es obligatorio",
-                                valueAsNumber: true,
-                                min: { value: 0, message: "No puede ser menor a 0" }
-                            })}
-                            className={inputStyle}
-                            placeholder="13763"
-                        />
-                        {errors.empleado && <p className="text-sm text-[var(--accent-100)]">{errors.empleado.message}</p>}
-                    </div>
-
+                    <InputEmpleado
+                        value={watch("empleado")}
+                        onChange={(legajo) => setValue("empleado", (legajo))}
+                        error={errors.empleado?.message}
+                        required
+                        placeholder="Buscar por legajo o nombre..."
+                    />
                     {/* Turnos */}
                     <SelectTurnos
                         value={watch("turno")}
@@ -117,8 +116,6 @@ export const ModalAddVale: FC<ModalAddValeProps> = ({ openModal }) => {
                         />
                         {errors.importe && <p className="text-sm text-[var(--accent-100)]">{errors.importe.message}</p>}
                     </div>
-                    {/* FIRMA */}
-                    <SignatureComponent onSuccess={id => setValue("firma_empleado", id)} />
 
                     {/* Botones */}
                     <div className="flex flex-col items-center space-y-2 pt-4">

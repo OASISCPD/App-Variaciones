@@ -1,9 +1,6 @@
-import axios from "axios";
 import React from "react"
 import { BiLogOut, BiMenu, BiX } from "react-icons/bi"
 import { Link, useNavigate } from "react-router-dom"
-import { API_URL } from "../service/connection";
-import { FaHome, FaUsers } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { FiHome, FiUsers } from "react-icons/fi";
 import { api } from "../api/api";
@@ -85,14 +82,19 @@ export function ResponsiveSidebar({
     const navigate = useNavigate()
 
     const logout = async () => {
-        navigate("/")
-
         try {
-            await api.get('/logout', {
-                withCredentials: true // importante si la sesión se maneja con cookies
-            })
+            // Hacer POST al endpoint de logout para limpiar cookies en el servidor
+            await api.post('/auth/logout', {}, {
+                withCredentials: true // importante para enviar las cookies
+            });
+
+            // Redirigir después de cerrar sesión exitosamente
+            navigate("/");
+
         } catch (err) {
-            console.error("Error al cerrar sesión", err)
+            console.error("Error al cerrar sesión", err);
+            // Aunque haya error, redirigir igual para evitar que el usuario quede atascado
+            navigate("/");
         }
     }
 
@@ -175,7 +177,7 @@ export function ResponsiveSidebar({
                             <BiMenu className="h-5 w-5" />
                         </button>
                     </header>
-                    <header className=" hidden  lg:flex  lg:block  items-center justify-between h-16 px-4 py-4 border-b border-[var(--primary-200)] bg-[var(--primary-100)]">
+                    <header className=" hidden  lg:flex items-center justify-between h-16 px-4 py-4 border-b border-[var(--primary-200)] bg-[var(--primary-100)]">
                         {/* Título */}
                         <h1 className="text-[var(--text-100)] text-xl pl-4 font-semibold tracking-wide">
                             Variaciones de cajas

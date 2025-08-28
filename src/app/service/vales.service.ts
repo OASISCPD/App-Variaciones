@@ -39,3 +39,20 @@ export const getVales = async (filters?: GetFilters): Promise<ValeDTO[]> => {
         throw error
     }
 }
+
+
+// ...existing code...
+export const updateVale = async (id: number | string, updateData: Partial<ValeDTO>) => {
+    try {
+        const response = await axios.put(`${API_URL}/vales/${id}`, updateData, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error al actualizar vale:', error);
+        throw error;
+    }
+};

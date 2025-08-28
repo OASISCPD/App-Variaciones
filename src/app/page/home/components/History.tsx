@@ -2,7 +2,7 @@ import type {/*  ModalType, */ RegistrosVariaciones } from "../../../types"
 import { Filters } from "./Filters"
 import { formateDateTime, getActionColor } from "../../../utils";
 /* import { MdFilterAlt } from "react-icons/md"; */
-import { FiSettings as Settings, FiClock as Clock, FiUser as User, FiHash as Hash } from "react-icons/fi";
+import {  FiClock as Clock, FiUser as User, FiHash as Hash } from "react-icons/fi";
 import { ButtonFilter } from "../../../shared/UI/ButtonFilter";
 
 interface props {
@@ -107,7 +107,7 @@ export const HistoryBox: React.FC<props> = ({
                         : (
                             <div className="grid grid-cols-1 gap-4">
                                 {registers.map((item) => (
-                                    <div key={item.id} className="bg-[--bg-100] p-6 rounded-xl shadow-sm border border-[--bg-300] hover:shadow-md transition-all">
+                                    <div key={item.id} className="bg-[--bg-200] p-6 rounded-xl shadow-sm border border-[--bg-300] hover:shadow-md transition-all">
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center space-x-3">
                                                 <div className="w-8 h-8 shrink-0 rounded-full bg-blue-100 flex items-center justify-center">

@@ -23,6 +23,7 @@ interface InputEmpleadoProps {
     error?: string;
     required?: boolean;
     placeholder?: string;
+    initialLegajo?: string; // Nuevo prop para el legajo inicial
 }
 
 export const InputEmpleado: React.FC<InputEmpleadoProps> = ({
@@ -30,8 +31,11 @@ export const InputEmpleado: React.FC<InputEmpleadoProps> = ({
     onChange,
     error,
     required = false,
-    placeholder = "Buscar empleado..."
+    placeholder = "Buscar empleado...",
+    initialLegajo
 }) => {
+    console.log("VALUEEE", value);
+
     const [query, setQuery] = useState('');
     const [empleados, setEmpleados] = useState<Empleado[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -65,6 +69,38 @@ export const InputEmpleado: React.FC<InputEmpleadoProps> = ({
             setLoading(false);
         }
     };
+
+    // Buscar empleado por legajo inicial cuando se proporciona
+    useEffect(() => {
+        const fetchEmpleadoInicial = async (legajo: string) => {
+            if (!legajo) return;
+
+            try {
+                setLoading(true);
+                const response = await axios.get<ApiResponse>(`${API_URL}/empleados/search`, {
+                    params: { legajo },
+                    withCredentials: true
+                });
+
+                if (response.data.success && response.data.data.length > 0) {
+                    const empleado = response.data.data.find(emp => emp.legajo === legajo);
+                    if (empleado) {
+                        setSelectedEmpleado(empleado);
+                        onChange(empleado.legajo);
+                    }
+                }
+            } catch (error) {
+                console.error('Error buscando empleado inicial:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // Solo buscar si se proporciona initialLegajo y no hay empleado seleccionado
+        if (initialLegajo && !selectedEmpleado) {
+            fetchEmpleadoInicial(initialLegajo);
+        }
+    }, [initialLegajo]);
 
     useEffect(() => {
         if (debounceRef.current) {
@@ -212,11 +248,11 @@ export const InputEmpleado: React.FC<InputEmpleadoProps> = ({
                                             <div className="font-semibold text-[var(--text-200)] group-hover:text-[var(--text-100)]">
                                                 {empleado.nombre} {empleado.apellido || ''}
                                             </div>
-                                            {empleado.mail && (
+                                            {/*  {empleado.mail && (
                                                 <div className="text-xs text-[var(--text-100)] opacity-70">
                                                     {empleado.mail}
                                                 </div>
-                                            )}
+                                            )} */}
                                         </div>
                                     </div>
                                 </div>

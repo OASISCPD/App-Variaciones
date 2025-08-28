@@ -1,132 +1,129 @@
 import type React from "react"
-import type { ModalData } from "../../../types"
+import type { ModalDataVale } from "../../../types"
+import { RiPrinterLine } from "react-icons/ri"
 
 interface props {
-    modalData: ModalData | null
+    modalData: ModalDataVale | null
 }
+
 export const ModalVale: React.FC<props> = ({ modalData }) => {
 
     if (!modalData || !modalData.data) return null
 
     const { data } = modalData;
+    console.log(data);
+
+    // Formatear fecha
+    const fechaFormateada = data.fecha ? new Date(data.fecha).toLocaleDateString('es-AR') : '..../...../.....';
+
+    const onClickPrinter = () => {
+        window.open(`/print-vale/${modalData.data?.id}`)
+    }
+
     return (
-        <div className="space-y-6">
-            <div className="border-2 border-gray-300 rounded-lg p-6 bg-gray-50">
-                <div className="text-center mb-4">
-                    <h4 className="text-lg font-bold text-gray-900">VARIACIÓN DE CAJA</h4>
-                    <p className="text-sm text-gray-600">N° 024798</p>
+        <div className="space-y-6 text-[--text-200]">
+            {/* Header con título y número */}
+            <div className="text-center border-b border-[--bg-300] pb-4">
+                <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm opacity-75">Bingo Oasis</div>
+                    <div className="text-lg font-bold">VALE</div>
+                    <div className="text-sm font-mono text-[--primary-300]">N° {data.id || '000000'}</div>
                 </div>
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">FECHA</label>
-                        <div className="border-b border-gray-400 pb-1">
-                            <span className="text-sm">{data.fecha.split(" ")[0]}</span>
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">TURNO</label>
-                        <div className="border-b border-gray-400 pb-1">
-                            <span className="text-sm">Mañana</span>
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">SECTOR</label>
-                        <div className="border-b border-gray-400 pb-1">
-                            <span className="text-sm">{data.tipo_variacion}</span>
-                        </div>
-                    </div>
-                </div>
-                <div className="mb-6">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">NOMBRE DEL EMPLEADO</label>
-                    <div className="border-b border-gray-400 pb-1">
-                        <span className="text-sm">{data.empleado}</span>
-                    </div>
-                </div>
-                <div className="mb-6">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">VARIACIÓN</label>
-                    <div className="flex space-x-6">
-                        <div className="flex items-center">
-                            <input type="checkbox" checked={data.faltante !== null} readOnly className="mr-2" />
-                            <span className="text-sm">FALTANTE</span>
-                            <input
-                                type="checkbox"
-                                checked={data.sobrante !== null}
-                                readOnly
-                                className="ml-4 mr-2"
-                            />
-                            <span className="text-sm">SOBRANTE</span>
-                        </div>
-                    </div>
-                    <div className="mt-2 text-sm">
-                        <span className="font-medium">Monto: </span>
-                        <span className={data.faltante ? "text-red-600" : "text-green-600"}>
-                            ${(data.faltante || data.sobrante || 0).toLocaleString()}
-                        </span>
+                <RiPrinterLine
+                    className="text-[--primary-300] cursor-pointer hover:text-[--primary-200] transition-colors"
+                    onClick={onClickPrinter}
+                    size={20}
+                />
+            </div>
+
+            {/* Información principal en 3 columnas */}
+            <div className="grid grid-cols-3 gap-6 mb-6">
+                <div className="text-center">
+                    <div className="font-semibold mb-2 text-[--text-100]">FECHA</div>
+                    <div className="border-b border-dotted border-[--primary-200] pb-1 min-h-[24px]">
+                        {fechaFormateada}
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-8 mt-8">
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-2">FIRMA DEL EMPLEADO</label>
-                        <div className="border-b border-gray-400 h-8"></div>
+                <div className="text-center">
+                    <div className="font-semibold mb-2 text-[--text-100]">TURNO</div>
+                    <div className="border-b border-dotted uppercase border-[--primary-200] pb-1 min-h-[24px]">
+                        {data.turno ? data.turno : '...'}
                     </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-2">FIRMA DEL RESPONSABLE</label>
-                        <div className="border-b border-gray-400 h-8"></div>
+                </div>
+
+                <div className="text-center">
+                    <div className="font-semibold mb-2 text-[--text-100]">LEGAJO</div>
+                    <div className="border-b border-dotted border-[--primary-200] pb-1 min-h-[24px]">
+                        {data.empleado || '........................'}
                     </div>
                 </div>
             </div>
 
-            <div className="border-2 border-gray-300 rounded-lg p-6 bg-blue-50">
-                <div className="text-center mb-4">
-                    <h4 className="text-lg font-bold text-gray-900">VALE</h4>
-                    <p className="text-xs text-gray-600">Vale niños - 20.000 unidades hoja simple</p>
+            {/* Nombre del empleado */}
+            <div className="mb-6">
+                <div className="font-semibold mb-2 text-[--text-100]">NOMBRE DEL EMPLEADO</div>
+                <div className="border-b border-dotted border-[--primary-200] pb-1 min-h-[24px]">
+                    {data.nombre_empleado || '...................................................................'}
                 </div>
+            </div>
 
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">FECHA:</label>
-                        <div className="border-b border-gray-400 pb-1">
-                            <span className="text-sm">{data.fecha.split(" ")[0]}</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">EMPLEADO:</label>
-                        <div className="border-b border-gray-400 pb-1">
-                            <span className="text-sm">{data.empleado}</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">MONTO:</label>
-                        <div className="border-b border-gray-400 pb-1">
-                            <span className="text-sm font-semibold">
-                                ${(data.faltante || data.sobrante || 0).toLocaleString()}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">CONCEPTO:</label>
-                        <div className="border-b border-gray-400 pb-1">
-                            <span className="text-sm">{data.detalle}</span>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-2">FIRMA</label>
-                            <div className="border-b border-gray-400 h-6"></div>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-2">ACLARACIÓN</label>
-                            <div className="border-b border-gray-400 h-6"></div>
-                        </div>
+            {/* Monto destacado */}
+            <div className="mb-6">
+                <div className="font-semibold mb-4 text-[--text-100] text-center">
+                    IMPORTE
+                </div>
+                <div className="flex justify-center">
+                    <div className="h-20 w-48 border-2 border-[--primary-200] bg-[--bg-300] flex items-center justify-center rounded">
+                        <span className="text-3xl font-bold text-[--primary-300]">
+                            ${data.importe ? Number(data.importe).toLocaleString('es-AR', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2
+                            }) : '0'}
+                        </span>
                     </div>
                 </div>
+            </div>
 
-                <div className="text-xs text-gray-500 mt-4 text-center">Dimensiones: 13 CM x 6 CM</div>
+            {/* Concepto/Detalle */}
+            {/*     <div className="mb-6">
+                <div className="font-semibold mb-2 text-[--text-100]">CONCEPTO</div>
+                <div className="border border-[--primary-200] bg-[--bg-200] p-3 rounded min-h-[60px]">
+                    <span className="text-sm">
+                        {data.concepto || data.detalle || 'Vale por diferencia de caja'}
+                    </span>
+                </div>
+            </div> */}
+
+            {/* Firmas */}
+            <div className="grid grid-cols-2 gap-8 mb-6">
+                <div className="text-center">
+                    <div className="border-b border-dotted border-[--primary-200] pb-1 mb-2 min-h-[40px] flex items-end justify-center">
+                        {'................................'}
+                    </div>
+                    <div className="font-semibold text-[--text-100]">FIRMA DEL EMPLEADO</div>
+                </div>
+
+                <div className="text-center">
+                    <div className="border-b border-dotted border-[--primary-200] pb-1 mb-2 min-h-[40px] flex items-end justify-center">
+                        {'................................'}
+                    </div>
+                    <div className="font-semibold text-[--text-100]">FIRMA DEL RESPONSABLE</div>
+                </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4 mb-6">
+
+                <div className="text-center w-full ml-auto">
+                    <div className="border-b border-dotted border-[--primary-200] pb-1 mb-2 min-h-[40px] flex items-end justify-center">
+                        {data.legajo_usuario ?? '................................'}
+                    </div>
+                    <div className="font-semibold text-[--text-100]">LEGAJO DEL RESPONSABLE</div>
+                </div>
+            </div>
+
+            {/* Nota pie de página */}
+            <div className="text-xs text-center text-[--text-300]">
+                Este vale es válido únicamente con la firma del empleado y del responsable.
             </div>
         </div>
     )

@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import type { UserDTO } from "../../../types"
-import { inputStyle, inputStyleDisabled } from "../../../utils/const";
+import {  inputStyleDisabled } from "../../../utils/const";
 import { SelectPermisos } from "../components/PermisosSelect";
 
 interface ModalEditProps {
@@ -23,7 +23,7 @@ export const ModalEdit: React.FC<ModalEditProps> = ({ cancel, confirm, data }) =
         fecha_registro: formatDateForInput(data?.fecha_registro)
     };
 
-    const { register, handleSubmit, formState: { errors }, watch } = useForm<UserDTO>({ defaultValues: formattedData })
+    const { register, handleSubmit, formState: { errors } } = useForm<UserDTO>({ defaultValues: formattedData })
 
     const onSubmit = (updateData: UserDTO) => {
         confirm(updateData)

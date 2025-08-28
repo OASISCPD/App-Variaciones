@@ -57,6 +57,20 @@ export const ModalAdd: React.FC<ModalAddProps> = ({ openModal }) => {
             toast.warning('Debe seleccionar un tipo de variación')
             return
         }
+        if (data.sobrante === 0 && data.faltante === 0) {
+            toast.warning('El monto de sobrante o faltante debe ser mayor a 0')
+            return
+        }
+
+        // Validar coherencia entre tipo de variación y montos
+        if (data.detalle === 'SOBRANTE' && data.faltante > 0) {
+            toast.warning('Si seleccionaste SOBRANTE, el campo faltante debe ser 0')
+            return
+        }
+        if (data.detalle === 'FALTANTE' && data.sobrante > 0) {
+            toast.warning('Si seleccionaste FALTANTE, el campo sobrante debe ser 0')
+            return
+        }
         try {
             setLoading(true)
             //1) CREAR CAJA
@@ -122,7 +136,7 @@ export const ModalAdd: React.FC<ModalAddProps> = ({ openModal }) => {
             }
             const registroCreado = await createRegistro(bodyRegistro);
             console.log("Registro creado:", registroCreado);
-            toast.success("Caja y variación creadas con éxito");
+            toast.success("Variación creadas con éxito");
             reset();
             //aca se cerraria el modal
             openModal(null);
@@ -133,7 +147,6 @@ export const ModalAdd: React.FC<ModalAddProps> = ({ openModal }) => {
             setLoading(false)
         }
     };
-
 
     return (
         <div className="space-y-6">
@@ -152,21 +165,6 @@ export const ModalAdd: React.FC<ModalAddProps> = ({ openModal }) => {
                         />
                         {errors.fecha && <p className="text-sm text-[var(--accent-100)]">{errors.fecha.message}</p>}
                     </div>
-                    {/* Legajo */}
-                    {/* <div>
-                        <label className="block text-sm font-medium mb-1">Legajo</label>
-                        <input
-                            type="number"
-                            {...register("empleado", {
-                                required: "El legajo es obligatorio",
-                                valueAsNumber: true,
-                                min: { value: 0, message: "No puede ser menor a 0" }
-                            })}
-                            className={inputStyle}
-                            placeholder="13763"
-                        />
-                        {errors.empleado && <p className="text-sm text-[var(--accent-100)]">{errors.empleado.message}</p>}
-                    </div> */}
                     {/* Reemplazar el input de legajo con: */}
                     <InputEmpleado
                         value={watch("empleado")}
@@ -175,15 +173,6 @@ export const ModalAdd: React.FC<ModalAddProps> = ({ openModal }) => {
                         required
                         placeholder="Buscar por legajo o nombre..."
                     />
-                    {/* Detalle */}
-                    {/*   <div>
-                        <label className="block text-sm font-medium mb-1">Detalle</label>
-                        <textarea
-                            {...register("detalle")}
-                            className={inputStyle}
-                            placeholder="Detalle Ej: (SOBRANTE/FALTANTE)"
-                        />
-                    </div> */}
                     {/* Reemplazar el textarea de detalle con el select: */}
                     <SelectTipoVariacion
                         value={watch("detalle")}
@@ -229,11 +218,12 @@ export const ModalAdd: React.FC<ModalAddProps> = ({ openModal }) => {
                             type="number"
                             step="0.01"
                             defaultValue={0}
+                            disabled={watch("detalle") === "FALTANTE"}
                             {...register("sobrante", {
                                 valueAsNumber: true,
                                 min: { value: 0, message: "Debe ser mayor o igual a 0" }
                             })}
-                            className={`${inputStyle} text-green-500`}
+                            className={`${inputStyle} text-green-500 ${watch("detalle") === "FALTANTE" ? "opacity-50 cursor-not-allowed" : ""}`}
                             placeholder="Sobrante"
                         />
                         {errors.sobrante && <p className="text-sm text-[var(--accent-100)]">{errors.sobrante.message}</p>}
@@ -245,11 +235,12 @@ export const ModalAdd: React.FC<ModalAddProps> = ({ openModal }) => {
                             type="number"
                             step="0.01"
                             defaultValue={0}
+                            disabled={watch("detalle") === "SOBRANTE"}
                             {...register("faltante", {
                                 valueAsNumber: true,
                                 min: { value: 0, message: "Debe ser mayor o igual a 0" }
                             })}
-                            className={`${inputStyle} text-red-500`}
+                            className={`${inputStyle} text-red-500 ${watch("detalle") === "SOBRANTE" ? "opacity-50 cursor-not-allowed" : ""}`}
                             placeholder="Faltante"
                         />
                         {errors.faltante && <p className="text-sm text-[var(--accent-100)]">{errors.faltante.message}</p>}

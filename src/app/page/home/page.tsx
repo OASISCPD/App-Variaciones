@@ -5,11 +5,11 @@ import { NavigationTabs } from "./components/NavigationTabs"
 import { ModalVariacion } from "./mod/ModalVariacion"
 import { ContainerModals } from "../../shared/ContainerModals"
 import { type ModalData, type ModalType, type CajaDTO, type ValeDTO, type ActiveTabDTO, type RegistrosVariaciones, type ModalDataVale } from "../../types"
-import { VariacionesModule } from "./components/List"
+import { VariacionesModule } from "./components/Variacion"
 import { HistoryBox } from "./components/History"
-import { ModalAdd } from "./mod/ModalAdd"
+import { ModalAdd } from "./mod/ModalAddVariacion"
 import { ModalQuestion } from "./mod/ModalDelete"
-import { ModalEdit } from "./mod/ModalEdit"
+import { ModalEdit } from "./mod/ModalEditVariacion"
 import { getCajas, updateCaja } from "../../service/cajas.service"
 import axios from "axios"
 import { API_URL } from "../../service/connection"
@@ -17,12 +17,14 @@ import { toast } from "react-toastify"
 import { LoaderHover } from "../../shared/Loader"
 import { ModalVariacionView } from "./mod/ModalVariacionView"
 import { ValesModule } from "./components/Vales"
-import { getVales } from "../../service/vales.service"
+import { getVales, updateVale } from "../../service/vales.service"
 import { createRegistro, getRegistros } from "../../service/register.service"
 import { useAuth } from "../../context/AuthContext"
-import { FaSleigh } from "react-icons/fa"
 import { ModalAddVale } from "./mod/ModalAddVale"
 import { ModalViewSignature } from "./mod/ModalViewSignature"
+import { ModalVale } from "./mod/ModalVale"
+import { ModalEditVale } from "./mod/ModalEditVale"
+import { useTab } from "../../context/activeTabContext"
 
 const PageHome = () => {
     return (
@@ -36,20 +38,22 @@ const PageHome = () => {
 
 
 const Home = () => {
+    //importamos contextos
     const { user } = useAuth()
+    const { activeTab, setActiveTab } = useTab()
 
-    const [activeTab, setActiveTab] = useState<ActiveTabDTO>("listado")
-    //modal para variaciones
+    //constante modal para variaciones y vales
     const [modalData, setModalData] = useState<ModalData | null>(null)
     const [modalDataVale, setModalDataVale] = useState<ModalDataVale | null>(null);
+    //constantes compartidas estre modulos internados
     const [fechaDesde, setFechaDesde] = useState("")
     const [fechaHasta, setFechaHasta] = useState("")
     const [legajo, setLegajo] = useState("")
+    //valors de loading para mostrar de front
     const [loading, setLoading] = useState<boolean>(false)
     const [loadingFetch, setLoadingFetch] = useState<boolean>(false);
     //estado para el select
     const [optionSelect, setOptionSelect] = useState<string>("")
-
     //variables [] importantes donde se setea la data de la api
     const [vales, setVales] = useState<ValeDTO[]>([])
     const [cajas, setCajas] = useState<CajaDTO[]>([])
@@ -60,7 +64,7 @@ const Home = () => {
     const handleOptionSelected = (value: string) => {
         setOptionSelect(value)
     }
-
+    //funcion que cambia el estado del contexto y vuelve a hacer el fetch correspondiente segun el type de la data
     const handleSetActiveTab = async (data: ActiveTabDTO) => {
         setActiveTab(data);
         if (data === 'vales') {
@@ -78,10 +82,11 @@ const Home = () => {
         }
     }
 
+    //funcion que llena el valor de modalData para luego con el valor que tiene mostrar x cosa
     const openModal = (type: ModalType, data: CajaDTO | null = null) => {
         setModalData({ type, data })
     }
-
+    //funcion que llena el valor de modalDataVales para luego con el valor que tiene mostrar x cosa
     const openModalVales = (type: ModalType, data: ValeDTO | null = null) => {
         console.log(type, data);
         if (data) {
@@ -90,12 +95,12 @@ const Home = () => {
             setModalDataVale({ type: type, data: null })
         }
     }
-
+    //funcion que cierra los modals
     const closeModal = () => {
         setModalData(null)
         setModalDataVale(null)
     }
-
+    //funcion que elimina la caja, en realidad la pasa a estado 4 que en la base de datos conocemos y entendemos que es 4
     const handleDelete = async (id: number | string, legajo: string | number) => {
         console.log(id);
         try {
@@ -121,6 +126,7 @@ const Home = () => {
             console.log("Registro creado:", registroCreado);
             toast.success('Variación eliminada')
             setLoading(false)
+            fetchCajas()
             closeModal()
         } catch (error) {
             console.error("Error al actualizar el estado de mi objeto de la tabla -cajas", error);
@@ -129,7 +135,24 @@ const Home = () => {
             setLoading(false)
         }
     }
+    const handleDeleteVale = async (id: number | string, legajo: string | number) => {
+        console.log(id, legajo);
+        try {
+            setLoading(true)
+            const res = await updateVale(id, { estado_id: 4 });
 
+            console.log('Vale actualizado', res);
+            toast.success('Vale eliminado')
+            closeModal()
+            fetchVales()
+        } catch (error) {
+            console.error("Error al actualizar el estado del vale", error);
+            toast.error('Error al eliminar vale')
+        } finally {
+            setLoading(false)
+        }
+
+    }
     const handleUpdate = async (updateData: CajaDTO) => {
         console.log(updateData);
         setLoading(true)
@@ -139,6 +162,7 @@ const Home = () => {
             tipo_variacion: updateData.tipo_variacion,
             sobrante: updateData.sobrante,
             faltante: updateData.faltante,
+            empleado: updateData.empleado
         }
 
         try {
@@ -211,15 +235,59 @@ const Home = () => {
             setLoadingFetch(false)
         }
     }
-    const resetValues = () => {
+
+    const resetValues = async () => {
+        // Resetear estados
         setFechaDesde("");
         setFechaHasta("");
         setLegajo("");
         setOptionSelect("");
+
+        // Forzar fetch con valores vacíos
+        setLoadingFetch(true);
+        try {
+            if (activeTab === 'listado') {
+                const data = await getCajas({
+                    fechaDesde: "",
+                    fechaHasta: "",
+                    legajo: "",
+                    tipo: ""
+                });
+                setCajas(data);
+            }
+            if (activeTab === 'historial') {
+                const data = await getRegistros({
+                    fechaDesde: "",
+                    fechaHasta: "",
+                    legajo: ""
+                });
+                setHistory(data);
+            }
+            if (activeTab === 'vales') {
+                const data = await getVales({
+                    fechaDesde: "",
+                    fechaHasta: "",
+                    legajo: ""
+                });
+                setVales(data);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoadingFetch(false);
+        }
     }
 
     useEffect(() => {
-        fetchCajas()
+        if (activeTab === 'listado') {
+            fetchCajas()
+        }
+        if (activeTab === 'vales') {
+            fetchVales()
+        }
+        if (activeTab === 'historial') {
+            fetchHistory()
+        }
     }, [])
 
     return (
@@ -287,7 +355,7 @@ const Home = () => {
                 <ContainerModals>
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-semibold text-[var(--primary-200)]">
-                            {modalDataVale.type === "variacion" ? "Detalles de Variación" : modalDataVale.type === 'vale' ? "Vale de Caja" : modalDataVale.type === 'editar' ? 'Editar Variacion' : modalDataVale.type === 'eliminar' ? "Eliminar" : modalDataVale.type === "agregar" ? "Agregar Variacion" : modalDataVale.type === 'ticket_variacion' ? "Variación" : modalDataVale.type === 'agregar_vale' ? "Agregar Vale" : modalDataVale.type === 'firma' && "Ver Firma"}
+                            {modalDataVale.type === "variacion" ? "Detalles de Variación" : modalDataVale.type === 'vale' ? "Vale" : modalDataVale.type === 'editar' ? 'Editar Variacion' : modalDataVale.type === 'eliminar_vale' ? "Eliminar Vale" : modalDataVale.type === "agregar" ? "Agregar Variacion" : modalDataVale.type === 'ticket_variacion' ? "Variación" : modalDataVale.type === 'editar_vale' ? "Editar Vale" : modalDataVale.type === 'firma' && "Ver Firma"}
                         </h3>
                         <button
                             onClick={closeModal}
@@ -300,8 +368,17 @@ const Home = () => {
                     {modalDataVale.type === 'agregar_vale' && (
                         <ModalAddVale openModal={() => { fetchVales(); closeModal() }} />
                     )}
-                    {modalDataVale.type === 'firma' && (
-                        <ModalViewSignature id={modalDataVale.data?.firma_empleado} />
+                    {modalDataVale.type === 'firma' && modalDataVale.data && (
+                        <ModalViewSignature valeId={modalDataVale.data?.id} success={() => fetchVales()} id={modalDataVale.data?.firma_empleado} />
+                    )}
+                    {modalDataVale.type === 'vale' && modalDataVale.data && (
+                        <ModalVale modalData={modalDataVale} />
+                    )}
+                    {modalDataVale.type === 'editar_vale' && modalDataVale.data && (
+                        <ModalEditVale onSuccess={() => { fetchVales(); closeModal() }} openModal={() => closeModal()} modalData={modalDataVale} />
+                    )}
+                    {modalDataVale.type === 'eliminar_vale' && (
+                        <ModalQuestion subText="Esta acción no se puede deshacer." text="¿Estás seguro que querés eliminar este Vale?" cancel={() => closeModal()} item={modalDataVale?.data} confirm={(id: number | string, legajo: string | number) => handleDeleteVale(id, legajo)} />
                     )}
                 </ContainerModals>
             )}

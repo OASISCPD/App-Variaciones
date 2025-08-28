@@ -4,13 +4,11 @@ import { SidebarPage } from "../../shared/ResponsiveSidebar"
 import { type ModalDataUsers, type ModalUsersType, type UserDTO } from "../../types"
 import { ContainerModals } from "../../shared/ContainerModals"
 import { ModalEdit } from "./mod/ModalEdit"
-import { ModalCreate } from "./mod/ModalCreate"
 import { ModalQuestion } from "./mod/ModalDelete"
 import { ListUsers } from "./components/ListTable"
 import { fetchUsers, updateUsuarioService } from "../../service/usuarios.service"
 import { LoaderHover } from "../../shared/Loader"
 import { toast } from "react-toastify"
-import { FaSlack } from "react-icons/fa"
 
 const UsersPage = () => {
     return (
